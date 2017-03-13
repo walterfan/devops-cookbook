@@ -1,0 +1,83 @@
+body {
+	background: #f1efe2;
+}
+
+#header {
+	margin: 0 auto 0 auto;
+	width: 650px;
+	padding: 0;
+	border: 5px solid #fff;
+	height: 120px;
+	background: #666 url(header.png) no-repeat left top;
+}
+
+ul#nav {
+	position: relative;
+	top: 68px;
+	left: 188px;
+	width: 346px;
+	margin: 0;
+	height: 22px;
+	list-style-type: none;
+	overflow: hidden;
+}
+
+body#welcome ul#nav  { background: transparent url(nav_f_2.png) no-repeat 0 0; }
+body#products ul#nav { background: transparent url(nav_f_2.png) no-repeat 0 -22px; }
+body#support ul#nav  { background: transparent url(nav_f_2.png) no-repeat 0 -44px; }
+body#contact ul#nav  { background: transparent url(nav_f_2.png) no-repeat 0 -66px; }
+
+ul#nav li a {
+	position: absolute;
+	top: 0;
+	width: 84px;
+	text-indent: -9000px;
+	text-decoration: none;
+	padding: 22px 0 0 0;
+	overflow: hidden;
+	height: 0px !important; 
+	height /**/:22px; /* IE5/Win */
+	background: transparent url(nav_f_2.png) no-repeat;
+}
+
+body#welcome li#wel a 			{ background-position: 0 0; width: 94px; left: 0; }
+body#welcome li#wel a:hover		{ background-position: 0 0; }
+body#welcome li#pro a 			{ background-position: -94px -88px; left: 94px; }
+body#welcome li#pro a:hover		{ background-position: -94px 0px; }
+body#welcome li#sup a 			{ background-position: -178px -88px; left: 178px; }
+body#welcome li#sup a:hover		{ background-position: -178px 0; }
+body#welcome li#con a 			{ background-position: -262px -88px; left: 262px; }
+body#welcome li#con a:hover		{ background-position: -262px 0; }
+
+body#products li#wel a			{ background-position: 0 -110px; width: 94px; left: 0; }
+body#products li#wel a:hover		{ background-position: 0 -22px; }
+body#products li#pro a			{ background-position: -94px -22px; left: 94px; }
+body#products li#pro a:hover		{ background-position: -94px -22px; }
+body#products li#sup a			{ background-position: -178px -88px; left: 178px; }
+body#products li#sup a:hover		{ background-position: -178px 0; }
+body#products li#con a			{ background-position: -262px -88px; left: 262px; }
+body#products li#con a:hover		{ background-position: -262px 0; }
+
+body#support li#wel a 			{ background-position: 0 -88px; width: 94px; left: 0; }
+body#support li#wel a:hover		{ background-position: 0 -44px; }
+body#support li#pro a 			{ background-position: -94px -110px; left: 94px; }
+body#support li#pro a:hover		{ background-position: -94px -44px; }
+body#support li#sup a 			{ background-position: -178px -44px; left: 178px; }
+body#support li#sup a:hover		{ background-position: -178px -44px; }
+body#support li#con a 			{ background-position: -262px -88px; left: 262px; }
+body#support li#con a:hover		{ background-position: -262px 0; }
+
+body#contact li#wel a 			{ background-position: 0 -88px; width: 94px; left: 0px; }
+body#contact li#wel a:hover		{ background-position: 0 -44px; }
+body#contact li#pro a 			{ background-position: -94px -88px; left: 94px; }
+body#contact li#pro a:hover		{ background-position: -94px 0; }
+body#contact li#sup a 			{ background-position: -178px -110px; left: 178px; }
+body#contact li#sup a:hover		{ background-position: -178px -66px; }
+body#contact li#con a 			{ background-position: -262px -66px; left: 262px; }
+body#contact li#con a:hover		{ background-position: -262px -66px; }
+
+
+p { text-align: center; }
+p a { color: #666; text-decoration: none; font: 11px/1.5 tahoma, arial, verdana, sans-serif; }
+p a em { font-style: normal; border-bottom: 1px solid #999; }
+p a:hover em { color: #333; border-bottom: 0; }

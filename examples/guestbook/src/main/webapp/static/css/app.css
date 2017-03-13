@@ -1,0 +1,65 @@
+body{
+  word-wrap: break-word;
+}
+.container {
+  margin-right: auto;
+  margin-left: auto;
+}
+.api-test-panel {
+  border-top: none;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  padding:15px;
+}
+
+.phoneNumberPrefix{
+  float: left;
+  width:20%;
+}
+.phoneNumber{
+  float: left;
+  width:80%;
+}
+.sipURI{
+  align:right;
+}
+.e2eCaseResult{
+  align:right;
+  font-weight: normal;
+  color: #999;
+}
+.message{
+  margin-bottom: 0px;
+}
+.cleanPaddingRight{
+  padding-right: 0px;
+}
+.cleanPaddingLeft{
+  padding-left: 0px;
+}
+.cleanMarginBottom{
+  margin-bottom: 0px;
+}
+textarea.editScriptHeight{
+  height:240px;
+}
+select[multiple].editScriptHeight{
+  height:240px;
+}
+.clip{
+  margin-top: 10px;
+  margin-left: -5px;
+}
+.logo{
+  margin-top:15px;
+  width:172px;
+  height:31px;
+}
+
+textarea.showScriptHeight{
+  height:400px;
+}
+
+.ngdialog.ngdialog-theme-plain.custom-width .ngdialog-content {
+    width: 800px;
+}

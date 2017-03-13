@@ -1,0 +1,20 @@
+{
+    "163": {
+        "password": "pass",
+        "siteName": "163",
+        "siteUrl": "http://163.com",
+        "userName": "walter"
+    },
+    "jianshu": {
+        "password": "password",
+        "siteName": "jianshu",
+        "siteUrl": "http://www.jianshu.com/users/e0b365801f48",
+        "userName": "walterfan"
+    },
+    "weibo": {
+        "password": "password",
+        "siteName": "weibo",
+        "siteUrl": "http://weibo.com/fanyamin",
+        "userName": "fanyamin"
+    }
+}
