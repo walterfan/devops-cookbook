@@ -7,10 +7,10 @@ import com.github.walterfan.checklist.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by walterfan on 4/2/2017.
  */
-@Controller
+@RestController
 @RequestMapping("/checklist/api/v1/users")
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
