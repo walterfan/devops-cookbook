@@ -1,6 +1,6 @@
 package com.github.walterfan;
 
-import com.github.walterfan.checklist.dao.UserEntity;
+import com.github.walterfan.checklist.domain.User;
 import com.github.walterfan.checklist.dao.UserRepository;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +27,12 @@ public class UserRepositoryTest {
     @Transactional
     @Rollback(true)
     public void saveUserEntity() throws Exception {
-        UserEntity user = new UserEntity();
+        User user = new User();
         user.setUsername("walter");
         user.setPassword("pass");
         user.setEmail("walter@");
 
-        UserEntity savedUser  = userRepository.save(user);
+        User savedUser  = userRepository.save(user);
         assertNotNull(user.getId());
 
     }

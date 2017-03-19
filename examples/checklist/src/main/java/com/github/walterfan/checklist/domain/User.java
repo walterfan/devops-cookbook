@@ -1,6 +1,5 @@
-package com.github.walterfan.checklist.dao;
+package com.github.walterfan.checklist.domain;
 
-import com.github.walterfan.checklist.domain.UserStatus;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.CascadeType;
@@ -17,7 +16,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "user")
-public class UserEntity extends BaseObject {
+public class User extends BaseObject {
     @Id
     @GeneratedValue(generator="system-uuid")
     @GenericGenerator(name="system-uuid", strategy = "uuid2")
@@ -43,7 +42,14 @@ public class UserEntity extends BaseObject {
     private Date lastModifiedTime;
 
     @OneToMany(cascade= CascadeType.ALL)
-    private List<TokenEntity> tokens;
+    private List<Token> tokens;
+
+
+    public User() {
+        this.status = UserStatus.pending;
+        this.createTime = new Date(System.currentTimeMillis());
+        this.lastModifiedTime = new Date(System.currentTimeMillis());
+    }
 
     public String getId() {
         return id;
@@ -93,11 +99,11 @@ public class UserEntity extends BaseObject {
         this.status = status;
     }
 
-    public List<TokenEntity> getTokens() {
+    public List<Token> getTokens() {
         return tokens;
     }
 
-    public void setTokens(List<TokenEntity> tokens) {
+    public void setTokens(List<Token> tokens) {
         this.tokens = tokens;
     }
 

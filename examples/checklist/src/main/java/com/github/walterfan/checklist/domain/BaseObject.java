@@ -1,4 +1,4 @@
-package com.github.walterfan.checklist.dao;
+package com.github.walterfan.checklist.domain;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;

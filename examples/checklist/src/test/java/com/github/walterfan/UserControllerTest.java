@@ -61,7 +61,7 @@ public class UserControllerTest  {
 
         byte[] jsonBytes = objectMapper.writeValueAsBytes(registration);
         MvcResult mvcResult = mockMvc.perform(
-                post("/users/register")
+                post("/checklist/api/v1/users/register")
                         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                         .content(jsonBytes)
                         .accept(MediaType.APPLICATION_JSON_UTF8))

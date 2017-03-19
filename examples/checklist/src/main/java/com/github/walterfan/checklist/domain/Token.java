@@ -1,6 +1,5 @@
-package com.github.walterfan.checklist.dao;
+package com.github.walterfan.checklist.domain;
 
-import com.github.walterfan.checklist.domain.TokenType;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -16,7 +15,7 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "token")
-public class TokenEntity extends BaseObject {
+public class Token extends BaseObject {
 
     private static final long FIVE_MINUTES_MILLI_SECONDS = 5 * 60 * 1000;
 

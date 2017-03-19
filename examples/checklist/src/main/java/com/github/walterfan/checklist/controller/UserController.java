@@ -1,6 +1,6 @@
 package com.github.walterfan.checklist.controller;
 
-import com.github.walterfan.checklist.dao.UserEntity;
+import com.github.walterfan.checklist.domain.User;
 import com.github.walterfan.checklist.dto.Activation;
 import com.github.walterfan.checklist.dto.Registration;
 import com.github.walterfan.checklist.service.UserService;
@@ -45,9 +45,9 @@ public class UserController {
 
     //TODO: login required
     @RequestMapping(method = RequestMethod.GET)
-    public List<UserEntity> getUsers() {
+    public List<User> getUsers() {
         logger.info("-----getUsers------");
-        List<UserEntity> list = userService.getUsers();
+        List<User> list = userService.getUsers();
         list.stream().forEach(x ->  logger.info(x.toString()));
         return list;
     }
