@@ -43,7 +43,8 @@ public class UserController {
         return new ModelAndView("index");
     }
 
-    //TODO: login required
+
+    //@AuthorizationRole({ "admin" })
     @RequestMapping(method = RequestMethod.GET)
     public List<User> getUsers() {
         logger.info("-----getUsers------");
