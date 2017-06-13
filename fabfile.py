@@ -4,15 +4,6 @@ from fabric.contrib.console import confirm
 import os, subprocess
 
 
-file_list = []
-git_changed_files = subprocess.check_output("git status -s -uno", shell=True)
-
-for git_changed_file in git_changed_files.split('\n'):
-    filenames = git_changed_file.split(' ')
-    if len(filenames) > 2:
-        filename = filenames[2]
-        file_list.append(filename.strip())
-
 local_dir = os.getcwd()
 
 backend_service_ports={
@@ -28,52 +19,72 @@ backend_service_ports={
 "kafka-zookeeper": "2181 9092"
 }
 
+need_print_cmd=True
+only_display_cmd=False
+
+docker_prefix="walterfan"
 restart_policy="--restart always"
-jenkins_volume_mapping = "/Users/walterfan/Documents/workspace:/workspace/jenkins:/var/jenkins_home"
-jenkins_container_name=""
-jenkins_image_name=""
+jenkins_volume_mapping = "/Users/yafan/Documents/workspace:/workspace/jenkins:/var/jenkins_home"
+jenkins_container_name="jenkins"
+jenkins_image_name="walterfan-jenkins"
+
+def run_cmd(cmd):
+	if(need_print_cmd):
+		print cmd
+	if not only_display_cmd:
+		local(cmd)
+
 
 @task
 def jenkins_build():
-	cmd = "docker build --tag jenkins-image ./docker/jenkins"
-	print cmd
-	local(cmd)
+	docker_build("jenkins")
+
+@task
+def jenkins_run(listen_port="1980"):
+	cmd = "docker run %s -v %s -p %s:8080 -p 50000:50000 --name=%s -d %s" % (restart_policy, jenkins_volume_mapping, listen_port, jenkins_container_name, jenkins_image_name)
+	run_cmd(cmd)
+
 
 @task
 def jenkins_start():
-	cmd = "docker start jenkins-container"
-	print cmd
-	local(cmd)
-
-def jenkins_run(listen_port="1980"):
-	cmd = "docker run %s -v %s -p %s:8080 -p 50000:50000 --name=jenkins-container -d jenkins-image" % (restart_policy, jenkins_volume_mapping, listen_port)
-	local(cmd)
+	cmd = "docker start %s" % jenkins_container_name
+	run_cmd(cmd)
 
 @task
 def jenkins_stop():
-	cmd = "docker stop jenkins-container"
+	cmd = "docker stop %s" % jenkins_container_name
 	local(cmd)
 	#cmd = "docker cp jenkins-container:/var/log/jenkins/jenkins.log jenkins.log"
 	#local(cmd)
 
 @task
 def jenkins_remove():
-	rm_docker("jenkins-container")
+	rm_docker(jenkins_container_name)
 
 @task
 def jenkins_commit(message):
-	cmd = "docker commit -m \"%s\" 8b74772fd434 walterfan/jenkins:1.0" % (message, )
+	cmd = "docker commit -m \"%s\" %s walterfan/jenkins:1.0" % (message, jenkins_container_name)
 
 @task
 def jenkins_check():
-	cmd = "docker exec jenkins-container ps -ef | grep java"
+	cmd = "docker exec %s ps -ef | grep java" % jenkins_container_name
 	print cmd
 	local(cmd)
 
-	cmd = "docker exec jenkins-container cat /var/jenkins_home/secrets/initialAdminPassword"
+	cmd = "docker exec %s cat /var/jenkins_home/secrets/initialAdminPassword" % jenkins_container_name
 	print cmd
 	local(cmd)
 
+@task
+def start_services():
+	cmd = "docker-compose up -d"
+	run_cmd(cmd)
+
+@task
+def stop_services():
+	cmd = "docker-compose down -v"
+	run_cmd(cmd)
+#----------------------------- general command ----------------
 def get_container_id(container_name):
 	str_filter = "-aqf name=%s" % container_name;
 	arr_cmd = ["docker", "ps", str_filter]
@@ -90,69 +101,61 @@ def get_port_args(service_name="kanban", increment=0):
 	return str_port
 
 @task
-def build(service_name="kanban"):
+def kanban_build(service_name="kanban"):
 	code_dir = "examples/%s" % service_name
 	container_id = get_container_id(service_name)
 	with lcd(code_dir):
 		local("git pull origin master")
-		#local("mvn clean package")
-		local("docker cp ./target/%s*.war %s:/usr/local/tomcat/webapps/%s.war" % (service_name, container_id, service_name))
+		local("mvn package")
+		local("docker cp ./target/%s*.war ../../web/apps/%s.war" % (service_name, service_name))
 
 
 @task
-def build_docker(service_name="kanban"):
-	cmd = "docker build --tag %s docker/%s" % (service_name, service_name)
-	print cmd
-	local(cmd)
-
+def docker_build(service_name="tomcat"):
+	cmd = "docker build --tag %s-%s docker/%s" % (docker_prefix, service_name, service_name)
+	run_cmd(cmd)
 
 
 @task
-def run_docker(service_name="kanban"):
-	str_port_args = get_port_args(service_name)
-	cmd = "docker run %s -v %s -d --name %s %s %s" % (restart_policy, volume_mapping, service_name, str_port_args, service_name)
-	print cmd
-	local(cmd)
+def docker_run(service_name="tomcat"):
+	port_args = get_port_args(service_name)
+	volume_args = "/workspace:/workspace"
+	cmd = "docker run %s -v %s -p %s -d --name %s %s" % (restart_policy, volume_args, port_args, service_name, service_name)
+	run_cmd(cmd)
 
 @task
-def stop_docker(service_name="kanban"):
+def docker_stop(service_name="tomcat"):
 	cmd = "docker stop %s" % (service_name)
-	print cmd
-	local(cmd)
+	run_cmd(cmd)
 
 @task
-def list_docker(service_name="kanban"):
-	cmd = "docker stop %s" % (service_name)
-	print cmd
-	local(cmd)
+def docker_list(service_name="tomcat"):
+	cmd = "docker ps %s" % (service_name)
+	run_cmd(cmd)
 
 @task
-def exec_docker(container_name="kanban", instruction="/bin/bash"):
+def docker_exec(container_name="tomcat", instruction="/bin/bash"):
 
 	contain_id = get_container_id(container_name)
-
-	cmd = "docker exec %s -t -i %s" % (contain_id, instruction)
-	print cmd
-	local(cmd)
+	instruction = "/bin/bash"
+	cmd = "docker exec %s -t -i %s" % (contain_id, 	instruction)
+	run_cmd(cmd)
 
 @task
-def rm_docker(container_name="kanban"):
+def docker_remove(container_name="kanban"):
 	cmd1 = "docker kill %s|| true" % container_name
-	print cmd1
-	local(cmd1)
+	run_cmd(cmd1)
+
 	cmd2 = "docker rm -v %s || true" % container_name
-	print cmd2
-	local(cmd2)
+	run_cmd(cmd2)
 
 @task
-def commit_docker(container_id, message):
-	cmd = "docker commit -m \"%s\" %s walterfan/jenkins:1.0" % (message, container_id)
-	print cmd
-	local(cmd)
+def docker_commit(container_id, image_name, message=""):
+	cmd = "docker commit -m \"%s\" %s %s" % (message, container_id, image_name)
+	run_cmd(cmd)
 
 @task
-def install_docker():
+def docker_install():
 	#cmd  ="brew remove docker && brew upgrade"
 	cmd = "brew cask install docker && open /Applications/Docker.app"
-	print cmd
-	local(cmd)    
+	run_cmd(cmd)    
