@@ -24,7 +24,7 @@ only_display_cmd=False
 
 docker_prefix="walterfan"
 restart_policy="--restart always"
-jenkins_volume_mapping = "/Users/yafan/Documents/workspace:/workspace/jenkins:/var/jenkins_home"
+jenkins_volume_mapping = "/home/walter/workspace/jenkins:/var/jenkins_home"
 jenkins_container_name="jenkins"
 jenkins_image_name="walterfan-jenkins"
 
@@ -59,7 +59,7 @@ def jenkins_stop():
 
 @task
 def jenkins_remove():
-	rm_docker(jenkins_container_name)
+	docker_remove(jenkins_container_name)
 
 @task
 def jenkins_commit(message):
