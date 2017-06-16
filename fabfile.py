@@ -121,14 +121,13 @@ def docker_build(service_name="tomcat"):
 
 
 @task
-def docker_run(service_name="tomcat"):
+def docker_run(service_name="tomcat", volume_args="-v /workspace:/workspace"):
 	port_args = get_port_args(service_name)
-	volume_args = "/workspace:/workspace"
 	
 	docker_container_name = docker_container_prefix + service_name
 	docker_image_name = docker_image_prefix + service_name
 
-	cmd = "docker run %s -v %s -p %s -d --name %s %s" % (restart_policy, volume_args, port_args, docker_container_name, docker_image_name)
+	cmd = "docker run %s %s %s -d --name %s %s" % (restart_policy, volume_args, port_args, docker_container_name, docker_image_name)
 	run_cmd(cmd)
 
 @task
