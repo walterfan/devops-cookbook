@@ -22,7 +22,9 @@ backend_service_ports={
 need_print_cmd=True
 only_display_cmd=False
 
-docker_prefix="walterfan"
+docker_image_prefix="walterfan-"
+docker_container_prefix="msa-"
+
 restart_policy="--restart always"
 jenkins_volume_mapping = "/home/walter/workspace/jenkins:/var/jenkins_home"
 jenkins_container_name="jenkins"
@@ -75,6 +77,7 @@ def jenkins_check():
 	print cmd
 	local(cmd)
 
+#-----------------------------------------------------------#
 @task
 def start_services():
 	cmd = "docker-compose up -d"
@@ -112,7 +115,8 @@ def kanban_build(service_name="kanban"):
 
 @task
 def docker_build(service_name="tomcat"):
-	cmd = "docker build --tag %s-%s docker/%s" % (docker_prefix, service_name, service_name)
+	docker_image_name = docker_image_prefix + service_name
+	cmd = "docker build --tag %s docker/%s" % (docker_image_name, service_name)
 	run_cmd(cmd)
 
 
@@ -120,17 +124,21 @@ def docker_build(service_name="tomcat"):
 def docker_run(service_name="tomcat"):
 	port_args = get_port_args(service_name)
 	volume_args = "/workspace:/workspace"
-	cmd = "docker run %s -v %s -p %s -d --name %s %s" % (restart_policy, volume_args, port_args, service_name, service_name)
+	
+	docker_container_name = docker_container_prefix + service_name
+	docker_image_name = docker_image_prefix + service_name
+
+	cmd = "docker run %s -v %s -p %s -d --name %s %s" % (restart_policy, volume_args, port_args, docker_container_name, docker_image_name)
 	run_cmd(cmd)
 
 @task
-def docker_stop(service_name="tomcat"):
-	cmd = "docker stop %s" % (service_name)
+def docker_stop(container_name="tomcat"):
+	cmd = "docker stop %s" % (container_name)
 	run_cmd(cmd)
 
 @task
-def docker_list(service_name="tomcat"):
-	cmd = "docker ps %s" % (service_name)
+def docker_list(container_name="tomcat"):
+	cmd = "docker ps %s" % (container_name)
 	run_cmd(cmd)
 
 @task
@@ -159,3 +167,4 @@ def docker_install():
 	#cmd  ="brew remove docker && brew upgrade"
 	cmd = "brew cask install docker && open /Applications/Docker.app"
 	run_cmd(cmd)    
+
