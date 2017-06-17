@@ -1,12 +1,12 @@
 package com.github.walterfan.checklist.service;
 
-import com.github.walterfan.checklist.domain.BaseObject;
-import com.github.walterfan.checklist.domain.Token;
-import com.github.walterfan.checklist.domain.User;
 import com.github.walterfan.checklist.dao.UserRepository;
-import com.github.walterfan.checklist.domain.UserStatus;
 import com.github.walterfan.checklist.dto.Activation;
 import com.github.walterfan.checklist.dto.Registration;
+import com.github.walterfan.msa.common.domain.BaseObject;
+import com.github.walterfan.msa.common.domain.Token;
+import com.github.walterfan.msa.common.domain.User;
+import com.github.walterfan.msa.common.domain.UserStatus;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

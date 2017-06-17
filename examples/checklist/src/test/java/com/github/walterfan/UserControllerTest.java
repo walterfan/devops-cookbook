@@ -6,6 +6,7 @@ import com.github.walterfan.checklist.dto.Registration;
 import com.github.walterfan.checklist.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -15,6 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import javax.annotation.Resource;
+
+import static com.github.walterfan.ChecklistTestUtil.createRegistration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,7 +35,8 @@ public class UserControllerTest  {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
+    @InjectMocks
+    @Resource(name ="userService")
     private UserService userService;
 
 
@@ -53,11 +58,7 @@ public class UserControllerTest  {
 
     @Test
     public void testRegister200() throws Exception {
-        Registration registration = new Registration();
-        registration.setEmail("walter4test@gmail.com");
-        registration.setPassword("testpassword");
-        registration.setPasswordConfirmation("testpassword");
-        registration.setUsername("walter");
+        Registration registration = createRegistration();
 
         byte[] jsonBytes = objectMapper.writeValueAsBytes(registration);
         MvcResult mvcResult = mockMvc.perform(
@@ -70,4 +71,6 @@ public class UserControllerTest  {
 
         String content = mvcResult.getResponse().getContentAsString();
     }
+
+
 }

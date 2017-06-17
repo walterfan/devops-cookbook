@@ -1,6 +1,7 @@
 package com.github.walterfan.checklist.dto;
 
-import com.github.walterfan.checklist.domain.BaseObject;
+
+import com.github.walterfan.msa.common.domain.BaseObject;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 

@@ -1,9 +1,10 @@
 package com.github.walterfan.checklist.controller;
 
-import com.github.walterfan.checklist.domain.User;
+
 import com.github.walterfan.checklist.dto.Activation;
 import com.github.walterfan.checklist.dto.Registration;
 import com.github.walterfan.checklist.service.UserService;
+import com.github.walterfan.msa.common.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

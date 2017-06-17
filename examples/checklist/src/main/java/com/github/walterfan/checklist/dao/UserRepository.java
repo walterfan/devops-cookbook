@@ -1,6 +1,7 @@
 package com.github.walterfan.checklist.dao;
 
-import com.github.walterfan.checklist.domain.User;
+
+import com.github.walterfan.msa.common.domain.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
