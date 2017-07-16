@@ -7,6 +7,8 @@ from flask import Flask
 from flask import request
 from werkzeug.exceptions import NotFound, ServiceUnavailable
 
+ACCOUNTS_API_PATH = "/api/v1/accounts"
+
 app = Flask(__name__)
 
 current_path = os.path.dirname(os.path.realpath(__file__))
@@ -14,7 +16,7 @@ current_path = os.path.dirname(os.path.realpath(__file__))
 auth = HTTPBasicAuth()
 
 users = {
-    "walter": "pass1"
+    "walter": "pass1234"
 }
 
 json_file = "{}/account.json".format(current_path)
@@ -39,7 +41,7 @@ def generate_response(arg, response_code=200):
     response.status_code = response_code
     return response
 
-@app.route("/", methods=['GET'])
+@app.route(ACCOUNTS_API_PATH, methods=['GET'])
 @auth.login_required
 def index():
     return generate_response({
@@ -48,14 +50,14 @@ def index():
     })
 
 @auth.login_required
-@app.route("/accounts", methods=['GET'])
+@app.route(ACCOUNTS_API_PATH, methods=['GET'])
 def list_account():
     accounts = read_data()
     return generate_response(accounts)
 
 #Create account
 @auth.login_required
-@app.route('/accounts', methods=['POST'])
+@app.route(ACCOUNTS_API_PATH, methods=['POST'])
 def create_account():
     account = request.json
     sitename = account["siteName"]
@@ -68,7 +70,7 @@ def create_account():
 
 #Retrieve account
 @auth.login_required
-@app.route('/accounts/<sitename>', methods=['GET'])
+@app.route(ACCOUNTS_API_PATH + '/<sitename>', methods=['GET'])
 def retrieve_account(sitename):
     accounts = read_data()
     if sitename not in accounts:
@@ -78,7 +80,7 @@ def retrieve_account(sitename):
 
 #Update account
 @auth.login_required
-@app.route('/accounts/<sitename>', methods=['PUT'])
+@app.route(ACCOUNTS_API_PATH + '/<sitename>', methods=['PUT'])
 def update_account(sitename):
     accounts = read_data()
     if sitename not in accounts:
@@ -92,7 +94,7 @@ def update_account(sitename):
 
 #Delete account
 @auth.login_required
-@app.route('/accounts/<sitename>', methods=['DELETE'])
+@app.route(ACCOUNTS_API_PATH + '/<sitename>', methods=['DELETE'])
 def delete_account(sitename):
     accounts = read_data()
     if sitename not in accounts:

@@ -1,0 +1,91 @@
+#linkTab {
+    font-size: 12px;
+    font-family: Arial;
+    color: #330099;
+    line-height: 24px;
+    text-align: left
+}
+
+ul.mktree  li.liBullet  .bullet {
+    cursor: default;
+    background: url(images/b1.gif) center left no-repeat;
+}
+.contentTab {
+    width: 100%;
+    margin-bottom: 20px
+}
+.contentTab caption {
+    padding: 6px;
+    background-color: #ddeeff;
+    color: white;
+    font-size: 1.2em;
+}
+.contentTab thead > tr {
+    background-color: #CCFFEE;
+    border: 2px groove #ddeeff;
+}
+.contentTab tbody {
+    border: 2px groove #ddeeff;
+}
+
+
+.contentTab thead > tr > th {
+    font-size: 1.1em;
+}
+
+
+.contentTab tfoot > tr > td {
+    text-align: right;    
+    font-size: 1.1em;
+    font-family: Arial;
+
+}
+.pagination {
+    margin: 0px
+}
+.pageTab {
+    margin: 0px
+}
+.pageTab tbody {
+    border: 0px groove #ddeeff;
+}
+
+.pageTab tbody > tr > td {
+    padding: 0px;   
+    margin: 0px; 
+    font-size: 0.9 em;
+    font-family: Arial;
+}
+
+.siteTab tbody {
+    border: 0px groove #ddeeff;
+}
+
+.siteTab tbody > tr > td {
+    padding: 2px;
+    text-align: right;    
+    font-size: 1em;
+    font-family: Arial;
+}
+
+.didTab tbody {
+    border: 0px groove #ddeeff;
+}
+
+.didTab tbody > tr > td {
+    padding: 2px;
+    text-align: right;    
+    font-size: 1em;
+    font-family: Arial;
+}
+
+.fullBtn{ 
+    width:5em;
+    background-color:#cfe
+}
+
+.table-hover tbody > tr:hover > td, 
+.table-hover tbody > tr:hover > th {
+    background-color: #9999ff
+}
+.footer { margin-left: auto; margin-right:auto; *zoom: 1;}

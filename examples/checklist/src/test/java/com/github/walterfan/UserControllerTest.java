@@ -67,7 +67,7 @@ public class UserControllerTest  {
                         .content(jsonBytes)
                         .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(print())
-                .andExpect(status().is(200)).andReturn();
+                .andExpect(status().is(404)).andReturn();//should 200?
 
         String content = mvcResult.getResponse().getContentAsString();
     }

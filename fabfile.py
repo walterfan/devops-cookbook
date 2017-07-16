@@ -3,7 +3,7 @@ from fabric.context_managers import *
 from fabric.contrib.console import confirm 
 import os, subprocess
 
-
+local_path = os.path.dirname(os.path.abspath(__file__))
 local_dir = os.getcwd()
 
 backend_service_ports={
@@ -70,13 +70,27 @@ def jenkins_commit(message):
 @task
 def jenkins_check():
 	cmd = "docker exec %s ps -ef | grep java" % jenkins_container_name
-	print cmd
+	print(cmd)
 	local(cmd)
 
 	cmd = "docker exec %s cat /var/jenkins_home/secrets/initialAdminPassword" % jenkins_container_name
-	print cmd
+	print(cmd)
 	local(cmd)
 
+
+#-----------------------------------------------------------#
+#bettervoice/freeswitch-container   1.6.16
+@task
+def freeswitch_start():
+	cmd = "sudo docker run --name freeswitch -p 5060:5060/tcp -p 5060:5060/udp -p 5080:5080/tcp -p 5080:5080/udp -p 8021:8021/tcp \
+	-p 7443:7443/tcp -p 60535-65535:60535-65535/udp \
+	-v %s/etc/freeswitch:/usr/local/freeswitch/conf bettervoice/freeswitch-container:1.6.16" % local_path
+	print(cmd)
+	local(cmd)
+
+@task
+def freeswitch_stop():
+	docker_remove(freeswitch) 
 #-----------------------------------------------------------#
 @task
 def start_services():
@@ -88,6 +102,24 @@ def stop_services():
 	cmd = "docker-compose down -v"
 	run_cmd(cmd)
 #----------------------------- general command ----------------
+
+@task
+def link_war(war_package, war_name):
+    cmd = "docker exec tomcat ln -s %s/%s /usr/local/tomcat/webapps/%s" % (local_path, war_package, war_name)
+    local(cmd)
+
+@task
+def deploy_war(war_package, war_name):
+    cmd = "docker cp %s/%s tomat:/usr/local/tomcat/webapps/%s" % (local_path, war_package, war_name)
+    local(cmd)
+
+@task
+def undeploy_war(war_name):
+    cmd = "docker exec tomcat rm -rf /usr/local/tomcat/webapps/%s" % (war_name)
+    local(cmd)
+    cmd = "docker exec tomcat rm -f /usr/local/tomcat/webapps/%s.war" % (war_name)
+    local(cmd)
+#----------------------------- general commands ---
 def get_container_id(container_name):
 	str_filter = "-aqf name=%s" % container_name;
 	arr_cmd = ["docker", "ps", str_filter]
@@ -143,9 +175,8 @@ def docker_list(container_name="tomcat"):
 @task
 def docker_exec(container_name="tomcat", instruction="/bin/bash"):
 
-	contain_id = get_container_id(container_name)
 	instruction = "/bin/bash"
-	cmd = "docker exec %s -t -i %s" % (contain_id, 	instruction)
+	cmd = "docker exec -it %s %s" % (container_name, 	instruction)
 	run_cmd(cmd)
 
 @task
@@ -167,3 +198,7 @@ def docker_install():
 	cmd = "brew cask install docker && open /Applications/Docker.app"
 	run_cmd(cmd)    
 
+@task
+def help():
+	print "examples:"
+	print "\tfab docker_run:cassandra,\"-v /home/walter:/workspace\" "

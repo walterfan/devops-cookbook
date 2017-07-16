@@ -1,0 +1,147 @@
+<html ng-app="agileApp">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>The Tao of Agile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script	type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+
+<!-- Bootstrap -->
+<link rel="stylesheet" href="css/bootstrap.css"/>
+<link rel="stylesheet" href="css/bootstrap-theme.css"/>
+
+<script type="text/javascript" src="js/angular.js"></script>
+    
+<link href="css/layout2.css" media="all" rel="stylesheet" />
+<link href="css/slide.css" media="all" rel="stylesheet" />
+<link href="css/font.css" media="all" rel="stylesheet" />
+
+
+<script type="text/javascript">
+angular.module("agileApp", [])
+.controller("agileCtrl", function($scope, $http){
+	$scope.url = "/agiletao/api/v1/request";
+	$scope.method="POST";
+	
+	
+	$scope.loadData = function() {
+		console.log("load data...");
+		var data = {
+                url: $scope.url,
+                method:$scope.method,
+                parameters: $scope.parameters,
+                headers: $scope.headers
+           
+        };
+		var res = $http.post('/agiletao/api/v1/request', data);
+		res.then(function(response) {
+			    console.log(response.status +", "+  response.data)
+			  });
+			
+
+		//...
+	}
+});
+</script>
+<style type="text/css">
+#linkTab {
+	font-size: 12px;
+	font-family: Arial;
+	color: #330099;
+	line-height: 24px;
+	text-align: left
+}
+
+ul.mktree  li.liBullet  .bullet {
+	cursor: default;
+	background: url(images/b1.gif) center left no-repeat;
+}
+.contentTab {
+width: 100%;
+margin-bottom: 20px
+}
+.contentTab caption {
+    padding: 6px;
+    background-color: #ddeeff;
+    color: white;
+    font-size: 1.2em;
+}
+.contentTab thead > tr {
+    background-color: #CCFFEE;
+    border: 2px groove #ddeeff;
+}
+.contentTab tbody {
+    border: 2px groove #ddeeff;
+}
+
+
+.contentTab thead > tr > th {
+    font-size: 1.1em;
+}
+
+
+.contentTab tfoot > tr > td {
+    text-align: right;    
+    font-size: 1.1em;
+	font-family: Arial;
+
+}
+.fullBtn{ 
+    width:8em;
+    background-color:#cfe
+}
+.table-hover tbody > tr:hover > td, 
+.table-hover tbody > tr:hover > th {
+    background-color: #9999ff
+}
+.footer { margin-left: auto; margin-right:auto; *zoom: 1;}
+</style>
+
+</head>
+
+<body ng-controller="agileCtrl">
+<div id="container">
+<ng-include src="'menu.html'"></ng-include>
+
+<div id="leftnav">
+
+
+</div>
+<div id="content">
+
+<div class = "item" id="CustomersDiv">
+<form>
+<div class="form-group">
+<label>URL</label>
+<input type="text" ng-model="url" value="http://127.0.0.1/api/v1/account"  class="form-control"/>
+</div>
+<div class="form-group">
+<label>Method</label>
+<select ng-model="method" class="form-control">
+<option value="GET">GET</option>
+<option value="POST">POST</option>
+<option value="UPDATE">UPDATE</option>
+<option value="DELETE">DELETE</option>
+</select>
+</div>
+<div class="form-group">
+<label>Headers</label>
+<textarea ng-model="headers" class="form-control"></textarea>
+</div>
+<div class="form-group">
+<label>Parameters</label>
+<textarea ng-model="parameters"  class="form-control"></textarea>
+</div>
+<div class="form-group">
+<button class="form-control btn btn-success btn-lg" ng-click="loadData()" >Submit</button>
+</div>
+
+</form>
+
+</div>
+</div><!-- content div end -->
+<ng-include src="'footer.html'"></ng-include>
+</div><!-- container div end -->
+
+
+</body>
+</html>

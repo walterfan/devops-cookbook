@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html ng-app="agileArticle">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>The Tao of Simple</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="css/bootstrap.css"/>
+    <link rel="stylesheet" href="css/bootstrap-theme.css"/>
+
+    <script type="text/javascript" src="js/angular.js"></script>
+    <script type="text/javascript">
+        angular.module("agileArticle", []);
+
+    </script>
+    <script type="text/javascript" src="js/article.js"></script>
+
+</head>
+
+<body ng-controller="agileArticleCtrl">
+<ng-include src="'menu.html'"></ng-include>
+<div class="navbar navbar-inverse">
+    <a class="navbar-brand" href="#">Agile Article</a>
+</div>
+
+<div class="panel panel-default row">
+    <div class="col-xs-3">
+        Categories
+    </div>
+    <div class="col-xs-8">
+        <div class="well" ng-repeat="item in data.articles">
+            <h3>
+                <strong>{{item.topic}}</strong>
+                <span class="pull-right lablel label-primary"> {{item.author}}</span>
+            </h3>
+            <span class="lead">{{item.content}}</span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

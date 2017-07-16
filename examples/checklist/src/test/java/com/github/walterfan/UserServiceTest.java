@@ -5,11 +5,14 @@ import com.github.walterfan.checklist.dto.Registration;
 import com.github.walterfan.checklist.service.UserService;
 import com.github.walterfan.msa.common.domain.User;
 import com.github.walterfan.msa.common.domain.UserStatus;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.util.ReflectionUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
@@ -28,9 +31,13 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @BeforeMethod
-    public void setup() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public void setup() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, NoSuchFieldException {
         userService = new UserService();
         userRepository = Mockito.mock(UserRepository.class);
+
+        Field field = userService.getClass().getDeclaredField("userRepository");;
+        field.setAccessible(true);
+        field.set(userService, userRepository);
 
         //PropertyUtils.setProperty(userService, "userRepository", userRepository);
     }
@@ -38,13 +45,15 @@ public class UserServiceTest {
     @Test
     public void testRegister() {
         Registration reg = ChecklistTestUtil.createRegistration();
-        User mockUser = new User();
+
+
+        ArgumentCaptor<User> argument = ArgumentCaptor.forClass(User.class);
 
         when(userRepository.findByEmail(reg.getEmail())).thenReturn(Optional.empty());
-        when(userRepository.save(any(User.class))).thenReturn(mockUser);
+        when(userRepository.save(argument.capture())).thenReturn(argument.capture());
 
         User user = userService.register(reg);
-        Assert.assertEquals(user.getTokens().size(), 1);
-        Assert.assertEquals(user.getStatus(), UserStatus.pending);
+        Assert.assertEquals(argument.getValue().getTokens().size(), 1);
+        Assert.assertEquals(argument.getValue().getStatus(), UserStatus.pending);
     }
 }

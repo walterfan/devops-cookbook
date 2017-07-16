@@ -1,0 +1,83 @@
+#content div {
+	margin-left:2em;
+	width:90%;
+	line-height:150%;
+	word-break:break-all;
+	word-wrap:wrap
+}
+#content h2 {
+	border-bottom:1px solid #8fc629;
+	color:green;
+	letter-spacing:5px;
+	margin-top:1em;
+	font-size:1.4em;
+	text-indent:2em;
+	word-spacing:0.6em;
+	vertical-align:bottom;
+}
+#content h2 span{
+	margin-left:1em;
+	font-size:0.8em;
+	color:black;
+	word-spacing:0.1em;
+}
+#category,#archive {
+	line-height:110%;
+	padding-left:1em;
+	width:10em;
+	border-right:1px solid #c5c6c4;
+	border-bottom:1px solid #c5c6c4;
+	border-left:1px solid #c5c6c4;
+
+}
+#category h1,#category h2,#archive h1,#archive h2,#archive h3{
+	margin:0px;
+	padding:4px;
+	font-size:1.4em;
+
+}
+#category h1, #archive h1{
+	padding-top:1em;
+	padding-bottom:1em;
+	font-weight:bold;
+	border-top:1px solid #c5c6c4;
+	background-color:#f4f4f4;
+}
+#category h2, #archive h2, #archive h3{
+	font-weight:normal;
+	font-size:1em;
+
+}
+#archive h3{
+	margin-left:2em;
+	font-size:11px;
+}
+.rightText{
+	vertical-align:center;
+	text-align:right;
+}
+
+.textInput {
+	background-color:#eeeeee;
+	border-width:1px;
+	border-style:groove:3D;
+	border-color:#1a3f95
+}
+.listBox option {
+	background-color:#dae5f5;
+}
+.listBox .selectOpt {
+	background-color:#ffffff;
+}
+.listBox .otherOpt {
+	background-color:#435269;
+	color:white
+}
+.btnInput {
+	border:1px solid #333333;
+	color:#336699;
+	line-height:24px;
+	font-size:12px;
+	font-weight:bold;
+
+}

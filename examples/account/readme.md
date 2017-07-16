@@ -11,12 +11,14 @@ pip install requests
 pip install httpie
 
 python account.py
+
 ```
 
-from Crypto.Cipher import AES
+# dependencies management
 
-default_key = "this is a key"
-default_iv = "this is an IV456"
+pip freeze > requirements.txt
+
+pip install -r requirements.txt
 
 
 # Encryption
@@ -26,3 +28,9 @@ cipher_text = encryption_suite.encrypt("A really secret message. Not for prying 
 # Decryption
 decryption_suite = AES.new('This is a key123', AES.MODE_CBC, 'This is an IV456')
 plain_text = decryption_suite.decrypt(cipher_text)
+
+## example
+from Crypto.Cipher import AES
+
+default_key = "this is a key"
+default_iv = "this is an IV456"
