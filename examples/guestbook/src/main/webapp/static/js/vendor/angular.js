@@ -12468,7 +12468,7 @@ function LocationHashbangUrl(appBase, appBaseNoFile, hashPrefix) {
 
     if (!isUndefined(withoutBaseUrl) && withoutBaseUrl.charAt(0) === '#') {
 
-      // The rest of the url starts with a hash so we have
+      // The controller of the url starts with a hash so we have
       // got either a hashbang path or a plain hash fragment
       withoutHashUrl = beginsWith(hashPrefix, withoutBaseUrl);
       if (isUndefined(withoutHashUrl)) {

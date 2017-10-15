@@ -1,5 +1,6 @@
 package com.github.walterfan.checklist.dto;
 
+import com.github.walterfan.msa.common.domain.BaseObject;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -8,7 +9,7 @@ import javax.validation.constraints.Size;
 /**
  * Created by walterfan on 4/2/2017.
  */
-public class Registration {
+public class Registration extends BaseObject {
     @NotBlank
     private String username;
     @Size(min = 6, max = 32)

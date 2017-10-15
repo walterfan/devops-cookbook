@@ -1,3 +1,0 @@
-[2016-01-14 20:37:29,378] - com.github.walterfan.kanban.controller.AccountController.getAccounts(AccountController.java:35) [INFO ] got all accounts request
-[2016-01-14 20:37:48,345] - org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:862) [INFO ] Closing WebApplicationContext for namespace 'AgileTaoDispatcherServlet-servlet': startup date [Sun Jan 10 00:23:41 CST 2016]; parent: Root WebApplicationContext
-[2016-01-14 20:37:48,457] - org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:862) [INFO ] Closing Root WebApplicationContext: startup date [Sun Jan 10 00:23:38 CST 2016]; root of context hierarchy

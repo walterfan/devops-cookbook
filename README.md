@@ -22,7 +22,6 @@ Micro Service in Action
 * mkdir -p logs
 * mdkir -p data/db/mysql
 * mkdir -p web/public
-* mkdir -p web/pims
 
 ### start
 ```
@@ -40,7 +39,7 @@ docker-compose rm -v
 docker-compose exec mysqldb /bin/bash
 	mysql -u root -p
 
-open localhost:1981 by browser
+open localhost:1980 by browser
 
 ```
   * server:mysql

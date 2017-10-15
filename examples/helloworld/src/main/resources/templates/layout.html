@@ -1,0 +1,66 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+			xmlns:th="http://www.thymeleaf.org"
+			xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	<head>
+		<title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE">Spring Session Sample</title>
+		<link rel="icon" type="image/x-icon" th:href="@{/resources/img/favicon.ico}" href="../static/image/favicon.ico"/>
+
+		<link th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"></link>
+
+		<link th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap-responsive.min.css}" href="/webjars/bootstrap/3.3.7/css/bootstrap-responsive.min.css" rel="stylesheet"></link>
+
+		<link rel="stylesheet" type="text/css" media="all"  href="../css/hello.css" data-th-href="@{/css/hello.css}" />
+		<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+		<!--[if lt IE 9]>
+			<script th:src="@{/webjars/html5shiv/html5shiv.min.js}" src="/webjars/html5shiv/html5shiv.min.js"></script>
+		<![endif]-->
+	</head>
+
+
+	<body>
+		<div id="wrap">
+			<div class="navbar navbar-inverse navbar-static-top">
+				<div class="navbar-inner">
+					<div class="container">
+						<a class="brand" th:href="@{/}"><img th:src="@{/resources/img/logo.png}" alt="Spring Security Sample"/></a>
+
+<div class="nav-collapse collapse"
+		th:with="currentUser=${#httpServletRequest.userPrincipal?.principal}">
+	<div th:if="${currentUser != null}">
+			<form class="navbar-form pull-right" th:action="@{/logout}" method="post">
+					<input type="submit" value="Log out" />
+			</form>
+			<p id="un" class="navbar-text pull-right" th:text="${currentUser.username}">
+				sample_user
+			</p>
+	</div>
+	<ul class="nav">
+	</ul>
+</div>
+
+				</div>
+			</div>
+		</div>
+			<!-- Begin page content -->
+			<div class="container">
+				<div class="alert alert-success"
+							th:if="${globalMessage}"
+							th:text="${globalMessage}">
+						Some Success message
+				</div>
+				<div layout:fragment="content">
+						Fake content
+				</div>
+			</div>
+
+			<div id="push"><!--  --></div>
+		</div>
+
+		<div id="footer">
+			<div class="container">
+				<p class="muted credit">Visit the <a href="http://spring.io/spring-security">Spring Security</a> site for more <a href="https://github.com/spring-projects/spring-security/blob/master/samples/">samples</a>.</p>
+			</div>
+		</div>
+	</body>
+</html>

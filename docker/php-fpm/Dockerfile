@@ -2,6 +2,11 @@ FROM php:7.1-fpm
 
 MAINTAINER Walter Fan <walter.fan@gmail.com>
 
+#RUN curl -L -o /tmp/redis.tar.gz https://github.com/phpredis/phpredis/archive/2.2.7.tar.gz \
+#    && tar xfz /tmp/redis.tar.gz \
+#    && rm -r /tmp/redis.tar.gz \
+#    && mv phpredis-2.2.7 /usr/src/php/ext/redis
+
 RUN apt-get update && apt-get upgrade -y \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
@@ -22,4 +27,7 @@ RUN apt-get update && apt-get upgrade -y \
 # Install xdebug
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 
-
+# Install redis
+RUN pecl install -o -f redis \
+&&  rm -rf /tmp/pear \
+&&  echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini

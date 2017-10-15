@@ -1,0 +1,15 @@
+server:
+  port: 2008
+
+
+logging:
+  level:
+    root: DEBUG
+
+management:
+  security:
+    enabled: false
+
+spring:
+  thymeleaf:
+    cache: false

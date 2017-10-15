@@ -44,4 +44,15 @@
 
 
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>java.net</id>
+            <url>https://maven.java.net/content/repositories/public/</url>
+        </repository>
+        <repository>
+            <id>JBoss repository</id>
+            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
 </project>

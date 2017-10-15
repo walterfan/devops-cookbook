@@ -1,5 +1,8 @@
 package com.github.walterfan.msa.common.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 
 public class Function extends BaseObject {
     private int functionID;

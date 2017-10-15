@@ -49,11 +49,15 @@ myApp.controller('myController', function($scope, $http) {
             });
     };
 
-    $scope.submitLoginrForm = function() {
+    $scope.submitLoginForm = function() {
+
         var postData = {
             email: $scope.user.email,
             password: $scope.user.password,
         };
+
+
+
         $http({
             method  : 'POST',
             url     : '/checklist/api/v1/users/login',
@@ -62,11 +66,16 @@ myApp.controller('myController', function($scope, $http) {
         })
             .success(function(data) {
                 if (data.errors) {
-                    // Showing errors.
+                    console.log("login error: " + data.errors);
                     $scope.errors = data.errors;
                 } else {
                     $scope.message = data.message;
+                    console.log("login success: " + data.message);
                 }
-            });
+            })
+            .error(function(data, status, headers, config){
+            delay.reject(data);
+        });
+
     };
 });

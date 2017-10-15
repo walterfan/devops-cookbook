@@ -78,7 +78,53 @@ def jenkins_check():
 	local(cmd)
 
 
-#-----------------------------------------------------------#
+
+#-----------------------------grafana influx --------------------------#
+@task
+def graflux_build():
+	cmd = "docker build --tag %s docker/%s" % ("graflux", "graflux")
+	run_cmd(cmd)
+
+
+@task
+def graflux_start():
+	grafana_port = 3000
+	influx_api_port = 8086
+	influx_web_port = 8083
+	cmd = "docker run --name local-graflux -d -p %d:3000 -p %d:8086 -p %d:8083 graflux" % (grafana_port, influx_api_port, influx_web_port)
+	print(cmd)
+	local(cmd)
+
+@task
+def influx():
+	"""
+	execute the influx command in graflux docker
+	"""
+	cmd = "docker exec -it local-graflux influx"
+	run_cmd(cmd)
+
+@task
+def graflux_bash():
+	"""
+	execute the /bin/bash in graflux docker
+	"""
+	cmd = "docker exec -it local-graflux /bin/bash"
+	run_cmd(cmd)
+
+@task
+def graflux_stop():
+	#cmd = "docker stop local-graflux"
+	docker_remove("local-graflux")
+
+@task
+def redis_cli():
+	cmd = "docker exec -it local-redis redis-cli"
+	local(cmd)	
+@task
+def redis_bash():
+	cmd = "docker exec -it local-redis /bin/bash"
+	local(cmd)	
+#---------------------------- freeswitch -------------------------------#
 #bettervoice/freeswitch-container   1.6.16
 @task
 def freeswitch_start():
@@ -143,6 +189,12 @@ def kanban_build(service_name="kanban"):
 		local("git pull origin master")
 		local("mvn package")
 		local("docker cp ./target/%s*.war ../../web/apps/%s.war" % (service_name, service_name))
+
+
+@task
+def docker_rename(old_name, new_name):
+	cmd = "docker tag %s %s" % (old_name, new_name)
+	run_cmd(cmd)
 
 
 @task

@@ -7,13 +7,23 @@ import com.github.walterfan.msa.common.domain.BaseObject;
 import com.github.walterfan.msa.common.domain.Token;
 import com.github.walterfan.msa.common.domain.User;
 import com.github.walterfan.msa.common.domain.UserStatus;
+import javassist.NotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.mail.internet.MimeMessage;
+
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,6 +35,9 @@ public class UserService extends BaseObject {
     public static final int ACTIVATION_CODE_SIZE = 32;
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     public User register(Registration registration) {
 
@@ -62,4 +75,37 @@ public class UserService extends BaseObject {
         return list;
 
     }
+
+    @Transactional(readOnly = true)
+    public Optional<User> getUserByEmail(String email) {
+        return  userRepository.findByEmail(email);
+    }
+
+    private void sendEmail(User user) throws Exception {
+
+        MimeMessage message = mailSender.createMimeMessage();
+
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+
+
+        Map<String, Object> model = new HashMap<>();
+
+        model.put("user", "qpt");
+
+        helper.setTo("set-your-recipient-email-here@gmail.com");
+
+        helper.setText("<html><body>Here is a cat picture! <img src='cid:id101'/><body></html>", true);
+
+        helper.setSubject("Hi");
+
+
+        helper.setSubject("Hi");
+
+
+
+        mailSender.send(message);
+
+    }
+
 }
