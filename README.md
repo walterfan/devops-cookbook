@@ -1,12 +1,10 @@
-# msa
-Micro Service in Action
+# Devops Script
 
-# Examples
-## Account
-
-## Guestbook
-
-## Checklist
+## Examples
+* Ansible
+* Docker
+* kubernetes
+* Faric
 
 
 # Docker
