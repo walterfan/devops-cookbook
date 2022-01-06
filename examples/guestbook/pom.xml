@@ -47,7 +47,7 @@
 
         <javax-el-api-version>2.2.5</javax-el-api-version>
         <hibernate-validator-version>5.2.2.Final</hibernate-validator-version>
-        <h2-version>1.4.191</h2-version>
+        <h2-version>2.0.206</h2-version>
 
         <mybatis-version>3.3.1</mybatis-version>
         <mybatis-spring-version>1.2.4</mybatis-spring-version>
