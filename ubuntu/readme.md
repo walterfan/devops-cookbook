@@ -1,0 +1,1 @@
+ansible-playbook nginx.yml --extra-vars "ansible_sudo_pass=yourPassword"

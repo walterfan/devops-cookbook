@@ -2,6 +2,7 @@ data/
 web/
 target/
 *.o
+*.key
 *.class
 *.pyc
 *.a
