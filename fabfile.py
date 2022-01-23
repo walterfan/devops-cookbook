@@ -32,7 +32,7 @@ jenkins_image_name="walterfan-jenkins"
 
 def run_cmd(cmd):
 	if(need_print_cmd):
-		print cmd
+		print(cmd)
 	if not only_display_cmd:
 		local(cmd)
 
@@ -252,5 +252,5 @@ def docker_install():
 
 @task
 def help():
-	print "examples:"
-	print "\tfab docker_run:cassandra,\"-v /home/walter:/workspace\" "
+	print("examples:")
+	print("\tfab docker_run:cassandra,\"-v /home/walter:/workspace\" ")
