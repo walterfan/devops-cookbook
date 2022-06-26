@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 import time
 
@@ -6,8 +8,6 @@ SLEEP_TIME_IN_MS = 60
 def run_cmd(cmd):
     print("run %s" % cmd)
     return os.system(cmd)
-
-print("refer to https://wiki.cisco.com/display/PAN/How+to+block+ports+on+Mac")
 
 cmd1 = "sudo pfctl -ef /etc/pf443.conf"
 cmd2 = "sudo pfctl -sr"

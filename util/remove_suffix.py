@@ -1,19 +1,7 @@
+#!/usr/bin/env python3
+
 import sys, pyperclip
 
-""" python3.9
-def removeprefix(self: str, prefix: str, /) -> str:
-    if self.startswith(prefix):
-        return self[len(prefix):]
-    else:
-        return self[:]
-
-def removesuffix(self: str, suffix: str, /) -> str:
-    # suffix='' should not call self[:-0].
-    if suffix and self.endswith(suffix):
-        return self[:-len(suffix)]
-    else:
-        return self[:]
-"""
 def remove_suffix(text, suffix):
   
     lines = text.split("\n")
