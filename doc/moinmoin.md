@@ -86,7 +86,8 @@ python wikiserver.py &
 
 ```
 mkdir -p /etc/moin/log
-mkdir -p /var/log/moin ; chown moin /var/log/moin
+mkdir -p /var/log/moin
+chown moin /var/log/moin
 ```
 
 
@@ -165,3 +166,4 @@ sudo systemctl enable nginx.service
 
 # Reference
 * https://moinmo.in/HowTo/NginxWithUwsgi
+* https://www.thecuriousdev.com/blog/2016/installing-moinmoin-on-nginx-and-uwsgi/

@@ -1,0 +1,26 @@
+version: '3'
+services:
+  docker_jenkins:
+    user: root
+    restart: always
+    image: jenkins/jenkins:lts-jdk11
+    container_name: jenkins
+    ports:
+      - 8080:8080
+      - 50000:50000
+    volumes:
+      - /home/jenkins/jenkins_home/:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+      - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
+  docker_nginx:
+    restart: always
+    image: nginx
+    container_name: nginx
+    ports:
+      - 8090:80
+      - 80:80
+      - 433:433
+    volumes:
+      - /home/nginx/conf.d/:/etc/nginx/conf.d
+      - /home/webserver/static/jenkins/dist/dist:/usr/share/nginx/html

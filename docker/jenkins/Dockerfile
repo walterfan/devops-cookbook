@@ -1,5 +1,4 @@
-FROM jenkins:2.46.3
-
+FROM jenkins:lts-jdk11
 MAINTAINER Walter Fan
 
 USER root
