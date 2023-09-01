@@ -40,7 +40,7 @@ def run_cmd(c, cmd):
 	if(need_print_cmd):
 		print(cmd)
 	if not only_display_cmd:
-		run_cmd(c,cmd)
+		c.local(cmd)
 
 
 @task(hosts=default_hosts)
