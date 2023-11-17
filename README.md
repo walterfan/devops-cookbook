@@ -1,4 +1,4 @@
-# Devops Script
+# DevOps Cookbook
 
 ## Examples
 * Ansible

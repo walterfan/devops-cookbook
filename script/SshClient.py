@@ -4,6 +4,7 @@ import sys
 import os
 from loguru import logger
 from os import system
+import paramiko
 from paramiko import SSHClient, AutoAddPolicy, RSAKey
 from paramiko.auth_handler import AuthenticationException, SSHException
 from scp import SCPClient, SCPException
@@ -120,6 +121,7 @@ class SshClient:
             response = stdout.readlines()
             for line in response:
                 logger.info(f'INPUT: {cmd} | OUTPUT: {line}')
+
 
 def main():
     ssh_key_file = os.getenv('SSH_KEY_FILE')

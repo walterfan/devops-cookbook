@@ -37,8 +37,13 @@ def plantuml(c, port=1975):
 def srs_webrtc(c):
 	candidate = get_local_ip()
 	#cmd = 'CANDIDATE="{}"'.format(candidate)
-	cmd = f'docker run --rm -i -p 1935:1935 -p 1985:1985 -p 8080:8080 -p 1990:1990 -p 8088:8088 \
-    --env CANDIDATE={candidate} -p 8000:8000/udp \
-    registry.cn-hangzhou.aliyuncs.com/ossrs/srs:5 ./objs/srs -c conf/https.docker.conf'
+	cmd = f"docker run --rm --env CANDIDATE={candidate} \
+  -p 1935:1935 -p 8080:8080 -p 1985:1985 -p 8000:8000/udp \
+  registry.cn-hangzhou.aliyuncs.com/ossrs/srs:5 \
+  objs/srs -c conf/rtc.conf"
 	run_cmd(c, cmd)
 
+@task(hosts=default_hosts)
+def srs_signal(c):
+	cmd = "docker run --rm -p 1989:1989 registry.cn-hangzhou.aliyuncs.com/ossrs/signaling:1"
+	run_cmd(c, cmd)
