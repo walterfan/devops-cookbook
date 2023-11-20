@@ -12,7 +12,7 @@ services:
             - "./web:/web"
             - ./logs/nginx-error.log:/var/log/nginx/error.log
             - ./logs/nginx-access.log:/var/log/nginx/access.log
-            - ../..:/workspace
+            - .:/workspace
         depends_on:
             - "php"
             - "mysqldb"
@@ -54,26 +54,4 @@ services:
         volumes:
             - ./data/db/mysql:/var/lib/mysql
 
-    tomcat:
-        image: walterfan-tomcat
-        container_name: tomcat
-        restart: always
-        ports:
-            - 1975:8080
-        volumes:
-            - ./etc/tomcat/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
-            - ./etc/tomcat/manager-context.xml:/usr/local/tomcat/webapps/manager/META-INF/context.xml
-            - ../..:/workspace
-        links:
-            - "mysqldb"
-
-    jenkins:
-        image: walterfan-jenkins
-        container_name: jenkins
-        restart: always
-        ports:
-            - 1978:8080
-        volumes:
-            - ./data/jenkins:/var/jenkins_home
-            - ../..:/workspace
 

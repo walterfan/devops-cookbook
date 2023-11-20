@@ -1,0 +1,15 @@
+services:
+  minio:
+    container_name: minio
+    image: quay.io/minio/minio
+    restart: always
+    volumes:
+      - $PWD/data:/data
+    environment:
+      - TZ=Asia/Shanghai
+      - MINIO_ROOT_USER=<root用户>
+      - MINIO_ROOT_PASSWORD=<root密码>
+    ports:
+      - "9001:9000"
+      - "9091:9090"
+    command: server /data --console-address ":9090"

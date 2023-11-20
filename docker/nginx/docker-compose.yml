@@ -1,0 +1,10 @@
+web:
+  image: nginx
+  volumes:
+   - ./templates:/etc/nginx/templates
+   - ./content:/usr/share/nginx/html
+  ports:
+   - "80:80"
+  environment:
+   - NGINX_HOST=www.fanyamin.com
+   - NGINX_PORT=80

@@ -1,0 +1,13 @@
+version: '2'
+services:
+    tomcat:
+        image: walterfan-tomcat
+        container_name: tomcat
+        restart: always
+        ports:
+            - 1975:8080
+        volumes:
+            - ./etc/tomcat/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml
+            - ./etc/tomcat/manager-context.xml:/usr/local/tomcat/webapps/manager/META-INF/context.xml
+            - .:/workspace
+
