@@ -46,7 +46,7 @@ class RedisClient:
 
 def test_hashset():
 
-    client = RedisClient("192.168.56.113:7001,192.168.56.114:7001,192.168.56.115:7001", 'cisco2018redis')
+    client = RedisClient("192.168.56.113:7001,192.168.56.114:7001,192.168.56.115:7001", 'pass1234')
     #client = RedisClient("localhost:6379")
     conn = client.connect()
     #conn.execute_command("CLUSTER INFO")
@@ -89,7 +89,7 @@ def test_hashset():
 
 
 def test_hashget(prefix, timeslot):
-    client = RedisClient("192.168.56.113:7001,192.168.56.114:7001,192.168.56.115:7001", 'cisco2018redis')
+    client = RedisClient("192.168.56.113:7001,192.168.56.114:7001,192.168.56.115:7001", 'pass1234')
     conn = client.connect()
     logger.info("--- test_hashget ---")
     key = "{}_{}".format(prefix, timeslot)
