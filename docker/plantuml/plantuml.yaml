@@ -1,0 +1,8 @@
+version: '3.3'
+
+services:
+    # plantuml
+    plantuml:
+        image: plantuml/plantuml-server
+        ports:
+            - "8888:8080"

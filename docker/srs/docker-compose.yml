@@ -1,0 +1,12 @@
+web:
+  image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs:5
+  volumes:
+   - ./templates:/etc/nginx/templates
+   - ./content:/usr/share/nginx/html
+  ports:
+   - "1935:1935"
+   - "1980:8080"
+   - "1985:1985"
+   - "1975:1975/udp"
+  environment:
+   - CANDIDATE=$CANDIDATE
