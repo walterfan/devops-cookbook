@@ -1,12 +1,16 @@
-web:
-  image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs:5
-  volumes:
-   - ./templates:/etc/nginx/templates
-   - ./content:/usr/share/nginx/html
-  ports:
-   - "1935:1935"
-   - "1980:8080"
-   - "1985:1985"
-   - "1975:1975/udp"
-  environment:
-   - CANDIDATE=$CANDIDATE
+version: "3"
+services:
+  srs:
+    container_name: srs
+    image: registry.cn-hangzhou.aliyuncs.com/ossrs/srs:5
+    
+    ports:
+    - "1935:1935"
+    - "1975:8080"
+    - "1985:1985"
+    - "1975:1975/udp"
+    env_file:
+    - .env
+    environment:
+    - CANDIDATE=$CANDIDATE
+    command: ["./objs/srs", "-c", "conf/rtmp2rtc.conf"]

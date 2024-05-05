@@ -1,0 +1,86 @@
+version: '3.9'
+services:
+
+  wordpress:
+    # default port 9000 (FastCGI)
+    image: wordpress:5-fpm
+    container_name: wp-wordpress
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - 9000:9000
+    networks:
+      - wordpress
+    depends_on:
+      - database
+    volumes:
+      - ${WORDPRESS_LOCAL_HOME}:/var/www/html/wordpress
+      - ${WORDPRESS_UPLOADS_CONFIG}:/usr/local/etc/php/conf.d/uploads.ini
+      # - /path/to/repo/myTheme/:/var/www/html/wp-content/themes/myTheme
+    environment:
+      - WORDPRESS_DB_HOST=${WORDPRESS_DB_HOST}
+      - WORDPRESS_DB_NAME=${WORDPRESS_DB_NAME}
+      - WORDPRESS_DB_USER=${WORDPRESS_DB_USER}
+      - WORDPRESS_DB_PASSWORD=${WORDPRESS_DB_PASSWORD}
+      - WORDPRESS_CONFIG_EXTRA=define('WP_HOME','https://www.fanyamin.com/wordpress'); define('WP_SITEURL','https://www.fanyamin.com/wordpress');
+      - ABSPATH=/var/www/html/wordpress
+  database:
+    # default port 3306
+    image: mysql:8
+    container_name: wp-database
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - wordpress
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ${MYSQL_LOCAL_HOME}:/var/lib/mysql
+    command:
+      - '--default-authentication-plugin=mysql_native_password'
+
+  nginx:
+    # default ports 80, 443 - expose mapping as needed to host
+    image: nginx:1
+    container_name: wp-nginx
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - wordpress
+    depends_on:
+      - wordpress
+    ports:
+      - "80:80"    # http
+      - "443:443"   # https
+    volumes:
+      - ${WEB_ROOT}:/var/www/html
+      - ${WEB_STATIC}:/var/www/html/static
+      - ${WORDPRESS_LOCAL_HOME}:/var/www/html/wordpress
+      - ${HOME_PAGE}:/var/www/html/index.html
+      - ${NGINX_CONF}:/etc/nginx/conf.d/default.conf
+      - ${NGINX_SSL_CERTS}:/etc/ssl:ro
+      - ${NGINX_LOGS}:/var/log/nginx
+
+  # adminer - bring up only as needed - bypasses nginx
+  #adminer:
+  #  # default port 8080
+  #  image: adminer:4
+  #  container_name: wp-adminer
+  #  restart: unless-stopped
+  #  networks:
+  #    - wordpress
+  #  depends_on:
+  #    - database
+  #  ports:
+  #    - "8080:8080"
+
+networks:
+  wordpress:
+    name: wp-wordpress
+    driver: bridge

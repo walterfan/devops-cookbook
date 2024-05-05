@@ -1,5 +1,0 @@
-services:
-    webapp:
-      image: alpine
-      environment:
-        - DEBUG=${DEBUG}

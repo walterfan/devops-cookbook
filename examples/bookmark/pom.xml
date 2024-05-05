@@ -201,59 +201,5 @@
 			<id>java.net</id>
 			<url>https://maven.java.net/content/repositories/releases</url>
 		</repository>
-		<repository>
-			<id>webex-cca-release</id>
-			<url>http://engci-maven.cisco.com/artifactory/webex-cca-release</url>
-			<releases>
-				<updatePolicy>always</updatePolicy>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>webex-cca-group</id>
-			<url>http://engci-maven.cisco.com/artifactory/webex-cca-group</url>
-			<releases>
-				<updatePolicy>always</updatePolicy>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>webex-cca-snapshots</id>
-			<url>http://engci-maven.cisco.com/artifactory/webex-cca-snapshots</url>
-			<snapshots>
-				<updatePolicy>always</updatePolicy>
-				<enabled>true</enabled>
-			</snapshots>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</repository>
-		<repository>
-			<id>webex-cca-thirdparty</id>
-			<url>http://engci-maven.cisco.com/artifactory/webex-cca-thirdparty</url>
-		</repository>
-
-		<repository>
-			<id>one-platform-release</id>
-			<name>One Platform Repo (release)</name>
-			<url>http://engci-maven.cisco.com/artifactory/onep</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>one-platform-thirdparty</id>
-			<name>One Platform Repo (3rd party)</name>
-			<url>http://engci-maven.cisco.com/artifactory/onep-thirdparty</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
 	</repositories>
 </project>
