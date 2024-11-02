@@ -1,0 +1,22 @@
+# 2022 version
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-node-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      project: hello-node
+  template:
+    metadata:
+      labels:
+        project: hello-node
+    spec: 
+      containers:
+      - name: hello-node
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        image: hfrtc/hellonode:1.0
+
