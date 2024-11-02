@@ -1,0 +1,22 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: entry-nginx
+spec:
+  selector:
+    matchLabels:
+      run: entry-nginx
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: entry-nginx
+    spec:
+      containers:
+        - name: entry-nginx
+          image: nginx
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+

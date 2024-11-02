@@ -1,37 +1,53 @@
-# quick start
+# k8s quick start
+
+
+
+## Example 1
+```
+kubectl get pods
+kubectl apply -f nginx_pod.yaml
 
 ```
-kubectl apply -f test_pod.yaml
 
-```
+* nginx_pod.yaml
 
-* test_pod.yaml
-
-```
-  apiVersion: apps/v1
-  kind: Deployment
-  metadata:
-   name: entry-nginx
-  spec:
-   selector:
-     matchLabels:
-       run: entry-nginx
-   replicas: 2
-   template:
-     metadata:
-       labels:
-         run: entry-nginx
-     spec:
-       containers:
-         - name: entry-nginx
-           image: nginx
-           imagePullPolicy: IfNotPresent
-           ports:
-             - containerPort: 80
-```
 
 * 查看 pod 列表
 
 ```
 kubectl get pod -l run=entry-nginx -o wide
+```
+
+## example 2
+* create and push docker image
+```shell
+cd hellonode
+docker image build -t hfrtc/hellonode:1.0 .
+docker login
+docker image push hfrtc/hellonode:1.0
+```
+
+* create pod
+
+```shell
+kubectl apply -f hellonode_pod.yaml
+kubectl get pods
+
+> NAME         READY   STATUS    RESTARTS   AGE
+> hello-node   1/1     Running   0          5m5s
+
+kubectl describe pod hello-node
+```
+* create service
+
+```shell
+# create local service for hello-node pod
+kubectl apply -f hellonode_svc.yaml
+kubectl get svc
+```
+* cleanup
+
+```shell
+kubectl delete pod hello-node
+kubectl delete svc hello-svc
 ```

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-node
+  labels:
+    project: hello-node
+spec:
+  containers:
+    - name: hello-node
+      image: hfrtc/hellonode:1.0
+      ports:
+        - containerPort: 8080
