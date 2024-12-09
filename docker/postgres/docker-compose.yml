@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15     # Use the desired PostgreSQL version
+    container_name: walter_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: walter          # Set the username
+      POSTGRES_PASSWORD: pass1234  # Set the password
+      POSTGRES_DB: reminder        # Set the default database
+    ports:
+      - "5432:5432"  # Expose PostgreSQL on port 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist data using a volume
+
+volumes:
+  postgres_data:

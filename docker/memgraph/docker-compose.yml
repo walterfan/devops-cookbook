@@ -1,0 +1,19 @@
+version: "3"
+services:
+  memgraph:
+    image: memgraph/memgraph:2.19.0
+    container_name: walter_memgraph
+    ports:
+      - "8687:7687" # listen port
+      - "8444:7444" # log port
+    volumes:
+      - memgraph_data:/var/lib/memgraph
+      - memgraph_log:/var/log/memgraph
+      - memgraph_etc:/etc/memgraph
+volumes:
+    memgraph_data:
+      driver: local
+    memgraph_log:
+      driver: local
+    memgraph_etc:
+      driver: local

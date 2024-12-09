@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  redis:
+    image: redis:7           # Use the desired Redis version
+    container_name: walter_redis
+    restart: always
+    command: ["redis-server", "--requirepass", "pass1234", "--appendonly", "yes"] # Set password and enable AOF
+    ports:
+      - "6379:6379"          # Expose Redis on port 6379
+    volumes:
+      - redis_data:/data     # Persist Redis data
+
+volumes:
+  redis_data:
