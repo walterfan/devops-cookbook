@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword      # Change this to a strong password
+      MYSQL_DATABASE: mydb                   # Optional: auto-create a database
+      MYSQL_USER: myuser                     # Optional: create an application user
+      MYSQL_PASSWORD: mypassword             # Optional: password for the user
+    ports:
+      - "3306:3306"                          # Host port:Container port
+    volumes:
+      - mysql_data:/var/lib/mysql            # Persist data
+      - ./initdb:/docker-entrypoint-initdb.d # Optional: run .sql scripts at startup
+    networks:
+      - backend
+
+volumes:
+  mysql_data:
+
+networks:
+  backend:
+
