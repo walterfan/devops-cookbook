@@ -42,7 +42,7 @@ source_suffix = {
     '.md': 'markdown',
 }
 templates_path = ['_templates']
-exclude_patterns = ['chapters']  # old single-language dir, now using en/ and zh/
+exclude_patterns = []
 
 # -- Options for HTML output -------------------------------------------------
 html_theme = 'sphinx_book_theme'

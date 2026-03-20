@@ -24,12 +24,17 @@ flowchart TB
         NetPol[Network Policy<br/>Default Deny]
         OPA[OPA Gatekeeper<br/>Policy Enforcement]
     end
+    subgraph PodAuth["Pod AuthN/AuthZ"]
+        SA[ServiceAccount<br/>Token Projection]
+        IRSA[IAM Roles for<br/>Service Accounts]
+        OIDC_P[OIDC Identity<br/>Provider]
+    end
     subgraph Secrets["Secrets Management"]
         Vault[HashiCorp Vault]
         Sealed[Sealed Secrets]
         ESO[External Secrets Operator]
     end
-    Supply --> Image --> Container --> K8s --> Secrets
+    Supply --> Image --> Container --> K8s --> PodAuth --> Secrets
 ```
 
 ## Container Security
@@ -336,6 +341,324 @@ kubectl get clusterroles,clusterrolebindings
 # Find overly permissive roles
 kubectl get clusterrolebindings -o json | \
   jq '.items[] | select(.roleRef.name == "cluster-admin") | .subjects[]'
+```
+
+## Pod Authentication & Authorization (AuthN / AuthZ)
+
+Access control for Pods in Kubernetes involves two complementary systems: **Kubernetes RBAC** governs Pod access to in-cluster resources, while **cloud IAM** governs Pod access to cloud services (e.g., S3, DynamoDB). The traditional approach — all Pods sharing the Node's IAM Role — is a serious violation of the principle of least privilege.
+
+```{mermaid}
+sequenceDiagram
+    autonumber
+    participant Pod
+    participant K8sAPI as K8s API Server
+    participant OIDC as OIDC Identity Provider<br/>(K8s cluster public key)
+    participant STS as AWS STS
+    participant S3 as AWS S3
+
+    Note over Pod: On startup, kubelet mounts<br/>Projected ServiceAccount Token
+
+    Pod->>K8sAPI: Authenticate with SA Token<br/>(RBAC governs in-cluster access)
+    K8sAPI-->>Pod: Allow / Deny cluster operations
+
+    Note over Pod: When accessing AWS resources
+
+    Pod->>STS: sts:AssumeRoleWithWebIdentity<br/>(SA Token + IAM Role ARN)
+    STS->>OIDC: Verify token signature<br/>(using cluster JWKS public key)
+    OIDC-->>STS: Token valid, Pod identity confirmed
+    STS-->>Pod: Issue temporary AWS credentials<br/>(AccessKey + SecretKey + SessionToken)
+    Pod->>S3: Access S3 with temporary credentials
+    S3-->>Pod: Return data
+```
+
+### The Problem: Node-Level Permission Sharing
+
+In the traditional model, every Pod on an EC2 node shares the same Instance Profile IAM permissions. An attacker who compromises any single Pod gains access to all cloud resources available to the entire node:
+
+```text
+┌─── EC2 Node (IAM Role: node-role) ───────────────┐
+│                                                    │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐        │
+│  │ Pod A    │  │ Pod B    │  │ Pod C    │        │
+│  │ needs S3 │  │ needs DDB│  │ no AWS   │        │
+│  │ read     │  │ write    │  │ access   │        │
+│  └──────────┘  └──────────┘  └──────────┘        │
+│                                                    │
+│  All Pods share ALL IAM permissions of node-role ⚠️│
+└────────────────────────────────────────────────────┘
+```
+
+### The Solution: IAM Roles for Service Accounts (IRSA)
+
+IRSA makes **Pods first-class citizens in IAM**. Each Pod obtains independent, least-privilege IAM credentials through its own ServiceAccount. The mechanism chain works as follows:
+
+1. **ServiceAccount Token Volume Projection** — kubelet uses the cluster's private key to sign an OIDC-compliant JWT for the Pod and mounts it as a projected volume
+2. **OIDC Identity Provider** — The K8s cluster is registered as an OpenID Connect Provider in AWS. AWS uses the cluster's public key (JWKS endpoint) to verify the token signature
+3. **STS AssumeRoleWithWebIdentity** — Once the token is verified, STS issues temporary AWS credentials (AccessKeyId / SecretAccessKey / SessionToken) for the Pod
+4. **IAM Trust Policy** — The trust policy on the IAM Role restricts which namespace/ServiceAccount combinations are allowed to assume it
+
+```text
+┌─── EC2 Node ─────────────────────────────────────────┐
+│                                                       │
+│  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐  │
+│  │ Pod A        │ │ Pod B        │ │ Pod C        │  │
+│  │ SA: s3-reader│ │ SA: ddb-write│ │ SA: default  │  │
+│  │ → S3 read    │ │ → DDB r/w   │ │ → no AWS     │  │
+│  └──────────────┘ └──────────────┘ └──────────────┘  │
+│                                                       │
+│  Each Pod gets ONLY the IAM permissions of its SA ✅   │
+└───────────────────────────────────────────────────────┘
+```
+
+### Step 1: Enable the OIDC Provider
+
+```bash
+# eksctl enables OIDC automatically when creating a cluster
+eksctl create cluster --name my-cluster --region us-west-2
+
+# Associate OIDC provider with an existing cluster
+eksctl utils associate-iam-oidc-provider \
+  --name my-cluster \
+  --approve
+
+# Verify the OIDC provider
+aws eks describe-cluster --name my-cluster \
+  --query "cluster.identity.oidc.issuer" --output text
+# Output: https://oidc.eks.us-west-2.amazonaws.com/id/EXAMPLED539D4633E53DE1B71EXAMPLE
+```
+
+Once established, the K8s API Server exposes two critical endpoints:
+
+- `/.well-known/openid-configuration` — OIDC discovery document
+- `/openid/v1/jwks` — JSON Web Key Set (cluster public keys) used by STS to verify token signatures
+
+### Step 2: Create IAM Role and Bind to ServiceAccount
+
+```bash
+# Single command to create both the IAM Role and K8s ServiceAccount
+eksctl create iamserviceaccount \
+  --name s3-reader \
+  --namespace production \
+  --cluster my-cluster \
+  --attach-policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess \
+  --approve
+```
+
+This command performs two actions under the hood:
+
+**1) Creates an IAM Role with a Trust Policy:**
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::ACCOUNT_ID:oidc-provider/oidc.eks.REGION.amazonaws.com/id/CLUSTER_ID"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "oidc.eks.REGION.amazonaws.com/id/CLUSTER_ID:sub": "system:serviceaccount:production:s3-reader",
+          "oidc.eks.REGION.amazonaws.com/id/CLUSTER_ID:aud": "sts.amazonaws.com"
+        }
+      }
+    }
+  ]
+}
+```
+
+The `Condition` in the Trust Policy ensures that only the ServiceAccount named `s3-reader` in the `production` namespace can assume this role — this is the core security constraint of IRSA.
+
+**2) Creates a K8s ServiceAccount with an IAM Role annotation:**
+
+```yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: s3-reader
+  namespace: production
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/eksctl-my-cluster-addon-iamsa-production-s3-reader-Role1-XXXXX
+```
+
+### Step 3: Configure Pods to Use IRSA
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-processor
+  namespace: production
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: data-processor
+  template:
+    metadata:
+      labels:
+        app: data-processor
+    spec:
+      serviceAccountName: s3-reader   # Reference the SA with IAM Role annotation
+      containers:
+        - name: app
+          image: registry.example.com/data-processor:1.0
+          env:
+            - name: AWS_DEFAULT_REGION
+              value: us-west-2
+          securityContext:
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+```
+
+The EKS Pod Identity Webhook (a Mutating Admission Controller) automatically injects the following into the Pod:
+
+```yaml
+# Environment variables injected by the webhook
+env:
+  - name: AWS_ROLE_ARN
+    value: arn:aws:iam::123456789012:role/s3-reader-role
+  - name: AWS_WEB_IDENTITY_TOKEN_FILE
+    value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+
+# Projected volume injected by the webhook
+volumes:
+  - name: aws-iam-token
+    projected:
+      sources:
+        - serviceAccountToken:
+            audience: sts.amazonaws.com
+            expirationSeconds: 86400
+            path: token
+volumeMounts:
+  - mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+    name: aws-iam-token
+    readOnly: true
+```
+
+AWS SDKs (Go / Java / Python / Node) automatically detect the `AWS_WEB_IDENTITY_TOKEN_FILE` and `AWS_ROLE_ARN` environment variables and perform the `sts:AssumeRoleWithWebIdentity` call transparently — no application code changes required.
+
+### ServiceAccount Token Deep Dive
+
+The Projected ServiceAccount Token is an OIDC-compliant JWT signed by the K8s API Server. It differs fundamentally from the legacy ServiceAccount Secret token:
+
+| Property | Legacy SA Secret Token | Projected SA Token (OIDC JWT) |
+|----------|------------------------|-------------------------------|
+| Lifetime | Never expires until manually deleted | Time-bound (default 24h), auto-rotated |
+| Binding scope | Bound to ServiceAccount only | Bound to specific Pod + Node |
+| Signing | API Server internal | Cluster private key; externally verifiable via OIDC |
+| Invalidation | Must manually delete Secret | Auto-invalidated 60s after Pod deletion |
+| Audience | Fixed to API Server | Configurable (e.g., `sts.amazonaws.com`) |
+
+Example JWT payload:
+
+```json
+{
+  "aud": ["sts.amazonaws.com"],
+  "exp": 1731613413,
+  "iat": 1700077413,
+  "iss": "https://oidc.eks.us-west-2.amazonaws.com/id/CLUSTER_ID",
+  "sub": "system:serviceaccount:production:s3-reader",
+  "kubernetes.io": {
+    "namespace": "production",
+    "pod": {
+      "name": "data-processor-7b8f9c6d4-x2k9m",
+      "uid": "778a530c-b3f4-47c0-9cd5-ab018fb64f33"
+    },
+    "serviceaccount": {
+      "name": "s3-reader",
+      "uid": "a087d5a0-e1dd-43ec-93ac-f13d89cd13af"
+    }
+  }
+}
+```
+
+The `sub` field `system:serviceaccount:production:s3-reader` is matched against the IAM Trust Policy `Condition` to determine whether the Pod is authorized to assume the role.
+
+### kubelet Token Rotation
+
+kubelet manages the full token lifecycle:
+
+- Proactively rotates the token when it reaches 80% of its TTL
+- Forces rotation if the token is older than 24 hours
+- Token is invalidated within 60 seconds after Pod deletion
+- Applications should periodically re-read the token file (every 5 minutes is recommended)
+
+### Disable Unnecessary ServiceAccount Token Mounts
+
+For Pods that don't need access to the K8s API or cloud resources, explicitly disable token automounting to reduce the attack surface:
+
+```yaml
+# Option 1: Disable at the ServiceAccount level
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: no-api-access
+automountServiceAccountToken: false
+
+---
+# Option 2: Disable at the Pod level (takes precedence)
+apiVersion: v1
+kind: Pod
+metadata:
+  name: static-web
+spec:
+  serviceAccountName: default
+  automountServiceAccountToken: false
+  containers:
+    - name: nginx
+      image: nginx:1.27-alpine
+```
+
+### RBAC + IRSA Together: Complete Least-Privilege Model
+
+A Pod that needs access to both K8s API resources and AWS services should have permissions configured along both axes:
+
+```yaml
+# K8s RBAC: governs access to in-cluster resources
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: configmap-reader
+  namespace: production
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: data-processor-cm-reader
+  namespace: production
+subjects:
+  - kind: ServiceAccount
+    name: s3-reader
+    namespace: production
+roleRef:
+  kind: Role
+  name: configmap-reader
+  apiGroup: rbac.authorization.k8s.io
+```
+
+```text
+                    data-processor Pod
+                    (SA: s3-reader)
+                          │
+              ┌───────────┴───────────┐
+              ▼                       ▼
+     K8s RBAC (in-cluster)     AWS IAM (cloud)
+     ─────────────────────     ────────────────
+     Role: configmap-reader    Policy: S3ReadOnly
+     → configmaps: get/list    → s3:GetObject
+     → everything else: deny   → everything else: deny
 ```
 
 ## NetworkPolicy
