@@ -6,10 +6,10 @@ services:
     container_name: mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword      # Change this to a strong password
-      MYSQL_DATABASE: mydb                   # Optional: auto-create a database
-      MYSQL_USER: myuser                     # Optional: create an application user
-      MYSQL_PASSWORD: mypassword             # Optional: password for the user
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} # Change this to a strong password
+      MYSQL_DATABASE: ${MYSQL_DATABASE}           # Optional: auto-create a database
+      MYSQL_USER: ${MYSQL_USER}                   # Optional: create an application user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}           # Optional: password for the user
     ports:
       - "3306:3306"                          # Host port:Container port
     volumes:
