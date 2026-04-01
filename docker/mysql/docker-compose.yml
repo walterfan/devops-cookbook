@@ -18,6 +18,20 @@ services:
     networks:
       - backend
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - "8040:80" # Access phpMyAdmin at http://localhost:8080
+    networks:
+      - backend
+
 volumes:
   mysql_data:
 
